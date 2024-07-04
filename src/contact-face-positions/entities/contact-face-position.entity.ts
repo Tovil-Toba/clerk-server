@@ -13,6 +13,9 @@ export class ContactFacePosition extends DefaultColumns {
   name: string;
 
   @ApiHideProperty()
-  @OneToMany(() => ContactFace, (contactFace) => contactFace.position)
+  @OneToMany(
+    () => ContactFace,
+    (contactFace: ContactFace) => contactFace.position,
+  )
   contactFaces?: ContactFace[];
 }
