@@ -9,6 +9,8 @@ import { CompanyCategoriesModule } from './company-categories/company-categories
 import { TypeOrmConfigService } from './config/type-orm-config.service';
 import { ContactFacePositionsModule } from './contact-face-positions/contact-face-positions.module';
 import { ContactFacesModule } from './contact-faces/contact-faces.module';
+import { ContactOffersModule } from './contact-offers/contact-offers.module';
+import { ContactsModule } from './contacts/contacts.module';
 import { ManagersModule } from './managers/managers.module';
 
 @Module({
@@ -21,6 +23,8 @@ import { ManagersModule } from './managers/managers.module';
     }),
     ContactFacePositionsModule,
     ContactFacesModule,
+    ContactOffersModule,
+    ContactsModule,
     ManagersModule,
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,

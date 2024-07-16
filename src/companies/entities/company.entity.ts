@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { CompanyCategory } from '../../company-categories/entities/company-category.entity';
 import { ContactFace } from '../../contact-faces/entities/contact-face.entity';
+import { Contact } from '../../contacts/entities/contact.entity';
 import { Manager } from '../../managers/entities/manager.entity';
 import { DefaultColumns } from '../../shared/entities/default-columns.entity';
 
@@ -12,7 +13,7 @@ export class Company extends DefaultColumns {
    * Идентификатор категории
    */
   @Column({ nullable: true, default: null })
-  categoryId?: null | number = null;
+  categoryId?: null | number;
 
   /**
    * Категория
@@ -44,7 +45,7 @@ export class Company extends DefaultColumns {
    * Идентификатор менеджера
    */
   @Column({ nullable: true, default: null })
-  managerId?: null | number = null;
+  managerId?: null | number;
 
   /**
    * Менеджер
@@ -110,4 +111,8 @@ export class Company extends DefaultColumns {
     (contactFace: ContactFace) => contactFace.company,
   )
   contactFaces?: ContactFace[];
+
+  @ApiHideProperty()
+  @OneToMany(() => Contact, (contact: Contact) => contact.company)
+  contacts?: Contact[];
 }

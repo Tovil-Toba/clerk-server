@@ -25,91 +25,11 @@ export const ApiFieldsQuery = (queryFields: QueryField[]) => {
       return;
     }
 
-    if (!queryField?.isFilterDisabled) {
-      const enumType: FilterEnumType = getFilterEnumType(queryField.filterType);
-      const enumName = getFilterEnumName(queryField.filterType);
-
-      if (queryField.filterType === 'boolean') {
-        const fieldDecorator = ApiQuery({
-          name: queryField.path,
-          type: String,
-          enum: enumType,
-          enumName,
-          explode: false,
-          required: !!queryField.required,
-          description:
-            queryField.description && `**${queryField.description}**`,
-          example: queryField.example,
-        });
-
-        decorators.push(fieldDecorator);
-      } else {
-        const fieldDecorator = ApiQuery({
-          name: queryField.path,
-          type: String,
-          explode: false,
-          required: !!queryField.required,
-          description:
-            queryField.description && `**${queryField.description}**`,
-          example: queryField.example,
-        });
-
-        const fieldFilterDecorator = ApiQuery({
-          name: `${queryField.path}${QUERY_FIELD_FILTER_POSTFIX}`,
-          type: String,
-          enum: enumType,
-          enumName,
-          explode: false,
-          required: false,
-          description: 'Фильтр',
-
-          /*description:
-            'Тип фильтра: начинается с, содержит, не содержит, заканчивается, равно, не равно.' +
-            ' Если тип фильтра не выбран, соответствующее поле не будет учитываться',*/
-        });
-
-        decorators.push(fieldDecorator, fieldFilterDecorator);
-      }
-    }
-
-    if (!queryField?.isOrderDisabled) {
-      const fieldOrderDecorator = ApiQuery({
-        name: `${queryField.path}${QUERY_FIELD_ORDER_POSTFIX}`,
-        type: String,
-        enum: OrderEnum,
-        enumName: 'OrderEnum',
-        explode: false,
-        required: false,
-        description: 'Порядок сортировки',
-      });
-
-      const fieldOrderPlaceDecorator = ApiQuery({
-        name: `${queryField.path}${QUERY_FIELD_ORDER_PLACE_POSTFIX}`,
-        type: Number,
-        required: false,
-        description: 'Приоритет сортировки  \n*Чем меньше, тем приоритетнее*',
-      });
-
-      decorators.push(fieldOrderDecorator, fieldOrderPlaceDecorator);
-    }
+    setFilterDecorators(queryField, decorators);
+    setOrderDecorators(queryField, decorators);
   });
 
-  const offsetDecorator = ApiQuery({
-    name: 'offset', // skip
-    type: Number,
-    required: false,
-    description:
-      '**Смещение**  \n*Без заданного ограничения работать не будет*',
-  });
-
-  const limitDecorator = ApiQuery({
-    name: 'limit', // take
-    type: Number,
-    required: false,
-    description: '**Ограничение**',
-  });
-
-  decorators.push(offsetDecorator, limitDecorator);
+  setOffsetAndLimitDecorators(decorators);
 
   return applyDecorators(...decorators);
 };
@@ -140,4 +60,116 @@ function getFilterEnumName(filterType: FilterType): string {
     default:
       return 'StringFilterEnum';
   }
+}
+
+function setFilterDecorators(
+  queryField: QueryField,
+  decorators: PropertyDecorator[],
+): void {
+  if (queryField?.isFilterDisabled) {
+    return;
+  }
+
+  if (queryField.enum) {
+    const fieldDecorator = ApiQuery({
+      name: queryField.path,
+      type: String,
+      enum: queryField.enum,
+      enumName: queryField.enum.toString(),
+      explode: false,
+      required: !!queryField.required,
+      description: queryField.description && `**${queryField.description}**`,
+      example: queryField.example,
+    });
+
+    decorators.push(fieldDecorator);
+
+    return;
+  }
+
+  const enumType: FilterEnumType = getFilterEnumType(queryField.filterType);
+  const enumName = getFilterEnumName(queryField.filterType);
+
+  if (queryField.filterType === 'boolean') {
+    const fieldDecorator = ApiQuery({
+      name: queryField.path,
+      type: String,
+      enum: enumType,
+      enumName,
+      explode: false,
+      required: !!queryField.required,
+      description: queryField.description && `**${queryField.description}**`,
+      example: queryField.example,
+    });
+
+    decorators.push(fieldDecorator);
+  } else {
+    const fieldDecorator = ApiQuery({
+      name: queryField.path,
+      type: String,
+      explode: false,
+      required: !!queryField.required,
+      description: queryField.description && `**${queryField.description}**`,
+      example: queryField.example,
+    });
+
+    const fieldFilterDecorator = ApiQuery({
+      name: `${queryField.path}${QUERY_FIELD_FILTER_POSTFIX}`,
+      type: String,
+      enum: enumType,
+      enumName,
+      explode: false,
+      required: false,
+      description: 'Фильтр',
+    });
+
+    decorators.push(fieldDecorator, fieldFilterDecorator);
+  }
+}
+
+function setOrderDecorators(
+  queryField: QueryField,
+  decorators: PropertyDecorator[],
+): void {
+  if (queryField?.isOrderDisabled || queryField.enum) {
+    return;
+  }
+
+  const fieldOrderDecorator = ApiQuery({
+    name: `${queryField.path}${QUERY_FIELD_ORDER_POSTFIX}`,
+    type: String,
+    enum: OrderEnum,
+    enumName: 'OrderEnum',
+    explode: false,
+    required: false,
+    description: 'Порядок сортировки',
+  });
+
+  const fieldOrderPlaceDecorator = ApiQuery({
+    name: `${queryField.path}${QUERY_FIELD_ORDER_PLACE_POSTFIX}`,
+    type: Number,
+    required: false,
+    description: 'Приоритет сортировки  \n*Чем меньше, тем приоритетнее*',
+  });
+
+  decorators.push(fieldOrderDecorator, fieldOrderPlaceDecorator);
+}
+
+function setOffsetAndLimitDecorators(decorators: PropertyDecorator[]): void {
+  const offsetDecorator = ApiQuery({
+    name: 'offset', // skip
+    type: Number,
+    required: false,
+    description:
+      '**Смещение**  \n*Без заданного ограничения работать не будет*',
+  });
+
+  const limitDecorator = ApiQuery({
+    name: 'limit', // take
+    type: Number,
+    required: false,
+    description: '**Ограничение**',
+  });
+
+  decorators.push(offsetDecorator, limitDecorator);
 }

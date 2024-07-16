@@ -108,19 +108,26 @@ export class QueryFieldsService<Entity> {
     const findOptionsWhere: FindOptionsWhere<Entity> = {};
 
     queryFields.forEach((queryField: QueryField) => {
+      const path = queryField.path;
+      const value: string | undefined = query?.[path]?.trim();
+
+      if (!value) {
+        return;
+      }
+
       if (queryField.isFilterDisabled) {
         return;
       }
 
-      const filterType: FilterType = queryField.filterType;
-      const path = queryField.path;
-      const value: string | undefined = query?.[path]?.trim();
-      const filter: string | undefined =
-        query?.[path + QUERY_FIELD_FILTER_POSTFIX]?.toUpperCase();
+      if (queryField.enum) {
+        set(findOptionsWhere, path, Equal(value));
 
-      if (!value || (!filter && filterType !== 'boolean')) {
         return;
       }
+
+      const filterType: FilterType = queryField.filterType;
+      const filter: string | undefined =
+        query?.[path + QUERY_FIELD_FILTER_POSTFIX]?.toUpperCase();
 
       switch (filterType) {
         case 'boolean':
@@ -164,7 +171,7 @@ export class QueryFieldsService<Entity> {
     findOptionsWhere: FindOptionsWhere<Entity>,
     path: string,
     value: string,
-    filter: string,
+    filter?: string,
   ): void {
     let findOperator: FindOperator<Date | string>;
 
@@ -197,14 +204,6 @@ export class QueryFieldsService<Entity> {
 
         findOperator = Between(dateFrom, dateTo);
         break;
-      case DateFilterEnum.Equals:
-        // подразумевается формат YYYY-MM-DD
-        if (value.length === 10) {
-          findOperator = Like(`${value}%`);
-        } else {
-          findOperator = Equal(value);
-        }
-        break;
       case DateFilterEnum.In:
         findOperator = Or(...values.map((_value) => Like(`${_value}%`)));
         break;
@@ -232,6 +231,15 @@ export class QueryFieldsService<Entity> {
       case DateFilterEnum.StartsWith:
         findOperator = Like(`${value}%`);
         break;
+      case DateFilterEnum.Equals:
+      default:
+        // подразумевается формат YYYY-MM-DD
+        if (value.length === 10) {
+          findOperator = Like(`${value}%`);
+        } else {
+          findOperator = Equal(value);
+        }
+        break;
     }
 
     if (!findOperator) {
@@ -245,7 +253,7 @@ export class QueryFieldsService<Entity> {
     findOptionsWhere: FindOptionsWhere<Entity>,
     path: string,
     queryValue: string,
-    filter: string,
+    filter?: string,
   ): void {
     let findOperator: FindOperator<number>;
 
@@ -268,9 +276,6 @@ export class QueryFieldsService<Entity> {
         }
 
         break;
-      case NumberFilterEnum.Equals:
-        findOperator = Equal(value);
-        break;
       case NumberFilterEnum.In:
         findOperator = In(values);
         break;
@@ -289,6 +294,10 @@ export class QueryFieldsService<Entity> {
       case NumberFilterEnum.NotEquals:
         findOperator = Not(value);
         break;
+      case NumberFilterEnum.Equals:
+      default:
+        findOperator = Equal(value);
+        break;
     }
 
     if (!findOperator) {
@@ -302,7 +311,7 @@ export class QueryFieldsService<Entity> {
     findOptionsWhere: FindOptionsWhere<Entity>,
     path: string,
     value: string,
-    filter: string,
+    filter?: string,
   ): void {
     let findOperator: FindOperator<string>;
 
@@ -317,9 +326,6 @@ export class QueryFieldsService<Entity> {
       case StringFilterEnum.EndsWith:
         findOperator = ILike(`%${value}`);
         break;
-      case StringFilterEnum.Equals:
-        findOperator = Equal(value);
-        break;
       case StringFilterEnum.In:
         findOperator = In(values);
         break;
@@ -331,6 +337,10 @@ export class QueryFieldsService<Entity> {
         break;
       case StringFilterEnum.StartsWith:
         findOperator = ILike(`${value}%`);
+        break;
+      case StringFilterEnum.Equals:
+      default:
+        findOperator = Equal(value);
         break;
     }
 

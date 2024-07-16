@@ -61,7 +61,7 @@ export class ContactFacesController {
 
   @Delete(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact face position deleted.' })
+  @ApiOkResponse({ description: 'Contact face deleted.' })
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.contactFacesService.remove(+id);
   }

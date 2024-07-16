@@ -1,8 +1,9 @@
 import { ApiHideProperty } from '@nestjs/swagger';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { Company } from '../../companies/entities/company.entity';
 import { ContactFacePosition } from '../../contact-face-positions/entities/contact-face-position.entity';
+import { Contact } from '../../contacts/entities/contact.entity';
 import { DefaultColumns } from '../../shared/entities/default-columns.entity';
 import { Name } from '../../shared/entities/name.entity';
 
@@ -60,11 +61,15 @@ export class ContactFace extends DefaultColumns {
     nullable: true,
     default: null,
   })
-  positionId?: null | number = null;
+  positionId?: null | number;
 
   @ApiHideProperty()
   @ManyToOne(() => Company, (company: Company) => company.contactFaces, {
     onDelete: 'CASCADE',
   })
   company: Company;
+
+  @ApiHideProperty()
+  @OneToMany(() => Contact, (contact: Contact) => contact.contactFace)
+  contacts?: Contact[];
 }

@@ -21,8 +21,8 @@ export class ContactFacesService {
     private readonly queryFieldsService: QueryFieldsService<ContactFace>,
   ) {}
 
-  create(createContactDto: CreateContactFaceDto): Promise<ContactFace> {
-    return this.contactFaceRepository.save(createContactDto);
+  create(createContactFaceDto: CreateContactFaceDto): Promise<ContactFace> {
+    return this.contactFaceRepository.save(createContactFaceDto);
   }
 
   findAll(query: object): Promise<ContactFace[]> {
@@ -52,9 +52,9 @@ export class ContactFacesService {
 
   update(
     id: number,
-    updateContactDto: UpdateContactFaceDto,
+    updateContactFaceDto: UpdateContactFaceDto,
   ): Promise<UpdateResult> {
-    return this.contactFaceRepository.update(id, updateContactDto);
+    return this.contactFaceRepository.update(id, updateContactFaceDto);
   }
 
   remove(id: number): Promise<DeleteResult> {
