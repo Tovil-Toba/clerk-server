@@ -5,6 +5,7 @@ import { FilterType } from './filter-type.model';
 export interface QueryField {
   description?: string;
   enum?: SwaggerEnumType;
+  enumName?: string;
   example?: string;
   filterType?: FilterType;
   isDisabled?: boolean;

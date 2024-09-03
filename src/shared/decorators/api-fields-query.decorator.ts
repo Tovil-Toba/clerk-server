@@ -75,7 +75,7 @@ function setFilterDecorators(
       name: queryField.path,
       type: String,
       enum: queryField.enum,
-      enumName: queryField.enum.toString(),
+      enumName: queryField.enumName,
       explode: false,
       required: !!queryField.required,
       description: queryField.description && `**${queryField.description}**`,

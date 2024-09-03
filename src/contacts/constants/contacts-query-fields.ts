@@ -82,6 +82,7 @@ export const CONTACTS_QUERY_FIELDS: QueryField[] = [
     path: 'status',
     description: 'Статус',
     enum: ContactStatusEnum,
+    enumName: 'ContactStatusEnum',
   },
   ...DEFAULT_QUERY_FIELDS,
 ];
