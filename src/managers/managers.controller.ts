@@ -21,7 +21,7 @@ import { Manager } from './entities/manager.entity';
 import { ManagersService } from './managers.service';
 
 @Controller('managers')
-@ApiTags('Менеджеры')
+@ApiTags('managers')
 export class ManagersController {
   constructor(private readonly managersService: ManagersService) {}
 

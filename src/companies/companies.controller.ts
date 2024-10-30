@@ -20,7 +20,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 
 @Controller('companies')
-@ApiTags('Компании')
+@ApiTags('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 

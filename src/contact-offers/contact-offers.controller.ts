@@ -20,7 +20,7 @@ import { UpdateContactOfferDto } from './dto/update-contact-offer.dto';
 import { ContactOffer } from './entities/contact-offer.entity';
 
 @Controller('contact-offers')
-@ApiTags('Предложение контакта')
+@ApiTags('contact-offers')
 export class ContactOffersController {
   constructor(private readonly contactOffersService: ContactOffersService) {}
 

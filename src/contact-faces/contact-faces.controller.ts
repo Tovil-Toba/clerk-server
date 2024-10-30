@@ -20,7 +20,7 @@ import { UpdateContactFaceDto } from './dto/update-contact-face.dto';
 import { ContactFace } from './entities/contact-face.entity';
 
 @Controller('contact-faces')
-@ApiTags('Контактные лица')
+@ApiTags('contact-faces')
 export class ContactFacesController {
   constructor(private readonly contactFacesService: ContactFacesService) {}
 

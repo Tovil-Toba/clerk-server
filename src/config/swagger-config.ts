@@ -13,6 +13,14 @@ export const getSwaggerConfig = (
     .setTitle(configService.get<string>('SWAGGER_TITLE'))
     .setDescription(configService.get<string>('SWAGGER_DESCRIPTION'))
     .setVersion(configService.get<string>('SWAGGER_VERSION'))
+    .addTag('companies', 'Компании')
+    .addTag('company-categories', 'Категории компаний')
+    .addTag('contact-face-positions', 'Должности контактных лиц')
+    .addTag('contact-faces', 'Контактные лица')
+    .addTag('contact-offers', 'Предложения контактов')
+    .addTag('contacts', 'Контакты')
+    .addTag('managers', 'Менеджеры')
+    .addTag('root')
     .build();
 
 export const setupSwagger = (app: INestApplication<any>): void => {

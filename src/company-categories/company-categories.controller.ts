@@ -20,7 +20,7 @@ import { UpdateCompanyCategoryDto } from './dto/update-company-category.dto';
 import { CompanyCategory } from './entities/company-category.entity';
 
 @Controller('company-categories')
-@ApiTags('Категории компаний')
+@ApiTags('company-categories')
 export class CompanyCategoriesController {
   constructor(
     private readonly companyCategoriesService: CompanyCategoriesService,
