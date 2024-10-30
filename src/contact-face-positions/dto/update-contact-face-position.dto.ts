@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 
 import { CreateContactFacePositionDto } from './create-contact-face-position.dto';
 
