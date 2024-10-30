@@ -8,7 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
@@ -39,14 +44,14 @@ export class CompanyCategoriesController {
 
   @Get()
   @ApiFieldsQuery(COMPANY_CATEGORIES_QUERY_FIELDS)
-  @ApiOkResponse({ description: 'Company categories found.' })
+  @ApiFoundResponse({ description: 'Company categories found.' })
   findAll(@Query() query?: object): Promise<CompanyCategory[]> {
     return this.companyCategoriesService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Company category found.' })
+  @ApiFoundResponse({ description: 'Company category found.' })
   findOne(@Param('id') id: string): Promise<CompanyCategory> {
     return this.companyCategoriesService.findOne(+id);
   }

@@ -8,7 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
@@ -37,14 +42,14 @@ export class ContactOffersController {
 
   @Get()
   @ApiFieldsQuery(CONTACT_OFFERS_QUERY_FIELDS)
-  @ApiOkResponse({ description: 'Contact offers found.' })
+  @ApiFoundResponse({ description: 'Contact offers found.' })
   findAll(@Query() query?: object): Promise<ContactOffer[]> {
     return this.contactOffersService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact offer found.' })
+  @ApiFoundResponse({ description: 'Contact offer found.' })
   findOne(@Param('id') id: string): Promise<ContactOffer | null> {
     return this.contactOffersService.findOne(+id);
   }
