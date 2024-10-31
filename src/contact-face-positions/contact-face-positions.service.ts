@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DeleteResult,
-  FindManyOptions,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
+import { DeleteResultDto } from '../shared/dto/delete-result.dto';
+import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { QueryFieldsService } from '../shared/services/query-fields.service';
 import { CONTACT_FACE_POSITIONS_QUERY_FIELDS } from './constants/contact-face-positions-query-fields';
 import { CreateContactFacePositionDto } from './dto/create-contact-face-position.dto';
@@ -48,11 +45,11 @@ export class ContactFacePositionsService {
   update(
     id: number,
     updateContactPositionDto: UpdateContactFacePositionDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResultDto> {
     return this.contactPositionRepository.update(id, updateContactPositionDto);
   }
 
-  remove(id: number): Promise<DeleteResult> {
+  remove(id: number): Promise<DeleteResultDto> {
     return this.contactPositionRepository.delete(id);
   }
 }

@@ -8,16 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
+import { DeleteResultDto } from '../shared/dto/delete-result.dto';
+import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { CompaniesService } from './companies.service';
 import { COMPANIES_QUERY_FIELDS } from './constants/companies-query-fields';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -40,32 +36,44 @@ export class CompaniesController {
 
   @Get()
   @ApiFieldsQuery(COMPANIES_QUERY_FIELDS)
-  @ApiFoundResponse({ description: 'Companies found.' })
+  @ApiOkResponse({
+    description: 'Companies found.',
+    type: Array<Company>,
+  })
   findAll(@Query() query?: object): Promise<Company[]> {
     return this.companiesService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiFoundResponse({ description: 'Company found.' })
+  @ApiOkResponse({
+    description: 'Company found.',
+    type: Company,
+  })
   findOne(@Param('id') id: string): Promise<Company> {
     return this.companiesService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Company updated.' })
+  @ApiOkResponse({
+    description: 'Company updated.',
+    type: UpdateResultDto,
+  })
   update(
     @Param('id') id: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResultDto> {
     return this.companiesService.update(+id, updateCompanyDto);
   }
 
   @Delete(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Company deleted.' })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  @ApiOkResponse({
+    description: 'Company deleted.',
+    type: DeleteResultDto,
+  })
+  remove(@Param('id') id: string): Promise<DeleteResultDto> {
     return this.companiesService.remove(+id);
   }
 }

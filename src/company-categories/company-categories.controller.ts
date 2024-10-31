@@ -8,16 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
+import { DeleteResultDto } from '../shared/dto/delete-result.dto';
+import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { CompanyCategoriesService } from './company-categories.service';
 import { COMPANY_CATEGORIES_QUERY_FIELDS } from './constants/company-categories-query-fields';
 import { CreateCompanyCategoryDto } from './dto/create-company-category.dto';
@@ -44,32 +40,44 @@ export class CompanyCategoriesController {
 
   @Get()
   @ApiFieldsQuery(COMPANY_CATEGORIES_QUERY_FIELDS)
-  @ApiFoundResponse({ description: 'Company categories found.' })
+  @ApiOkResponse({
+    description: 'Company categories found.',
+    type: Array<CompanyCategory>,
+  })
   findAll(@Query() query?: object): Promise<CompanyCategory[]> {
     return this.companyCategoriesService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiFoundResponse({ description: 'Company category found.' })
+  @ApiOkResponse({
+    description: 'Company category found.',
+    type: CompanyCategory,
+  })
   findOne(@Param('id') id: string): Promise<CompanyCategory> {
     return this.companyCategoriesService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Company category updated.' })
+  @ApiOkResponse({
+    description: 'Company category updated.',
+    type: UpdateResultDto,
+  })
   update(
     @Param('id') id: string,
     @Body() updateCompanyCategoryDto: UpdateCompanyCategoryDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResultDto> {
     return this.companyCategoriesService.update(+id, updateCompanyCategoryDto);
   }
 
   @Delete(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Company category deleted.' })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  @ApiOkResponse({
+    description: 'Company category deleted.',
+    type: DeleteResultDto,
+  })
+  remove(@Param('id') id: string): Promise<DeleteResultDto> {
     return this.companyCategoriesService.remove(+id);
   }
 }

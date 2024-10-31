@@ -8,16 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
+import { DeleteResultDto } from '../shared/dto/delete-result.dto';
+import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { CONTACTS_QUERY_FIELDS } from './constants/contacts-query-fields';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
@@ -40,32 +36,44 @@ export class ContactsController {
 
   @Get()
   @ApiFieldsQuery(CONTACTS_QUERY_FIELDS)
-  @ApiFoundResponse({ description: 'Contacts found.' })
+  @ApiOkResponse({
+    description: 'Contacts found.',
+    type: Array<Contact>,
+  })
   findAll(@Query() query?: object): Promise<Contact[]> {
     return this.contactsService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiFoundResponse({ description: 'Contact found.' })
+  @ApiOkResponse({
+    description: 'Contact found.',
+    type: Contact,
+  })
   findOne(@Param('id') id: string): Promise<Contact> {
     return this.contactsService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact updated.' })
+  @ApiOkResponse({
+    description: 'Contact updated.',
+    type: UpdateResultDto,
+  })
   update(
     @Param('id') id: string,
     @Body() updateContactDto: UpdateContactDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResultDto> {
     return this.contactsService.update(+id, updateContactDto);
   }
 
   @Delete(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact deleted.' })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  @ApiOkResponse({
+    description: 'Contact deleted.',
+    type: DeleteResultDto,
+  })
+  remove(@Param('id') id: string): Promise<DeleteResultDto> {
     return this.contactsService.remove(+id);
   }
 }

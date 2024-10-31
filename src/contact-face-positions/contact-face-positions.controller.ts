@@ -8,16 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
+import { DeleteResultDto } from '../shared/dto/delete-result.dto';
+import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { CONTACT_FACE_POSITIONS_QUERY_FIELDS } from './constants/contact-face-positions-query-fields';
 import { ContactFacePositionsService } from './contact-face-positions.service';
 import { CreateContactFacePositionDto } from './dto/create-contact-face-position.dto';
@@ -46,25 +42,34 @@ export class ContactFacePositionsController {
 
   @Get()
   @ApiFieldsQuery(CONTACT_FACE_POSITIONS_QUERY_FIELDS)
-  @ApiFoundResponse({ description: 'Contact face positions found.' })
+  @ApiOkResponse({
+    description: 'Contact face positions found.',
+    type: Array<ContactFacePosition>,
+  })
   findAll(@Query() query?: object): Promise<ContactFacePosition[]> {
     return this.contactFacePositionsService.findAll(query);
   }
 
   @Get(':id')
   @ApiIdParam()
-  @ApiFoundResponse({ description: 'Contact face position found.' })
+  @ApiOkResponse({
+    description: 'Contact face position found.',
+    type: ContactFacePosition,
+  })
   findOne(@Param('id') id: string): Promise<ContactFacePosition | null> {
     return this.contactFacePositionsService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact face position updated.' })
+  @ApiOkResponse({
+    description: 'Contact face position updated.',
+    type: UpdateResultDto,
+  })
   update(
     @Param('id') id: string,
     @Body() updateContactFacePositionDto: UpdateContactFacePositionDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResultDto> {
     return this.contactFacePositionsService.update(
       +id,
       updateContactFacePositionDto,
@@ -73,8 +78,11 @@ export class ContactFacePositionsController {
 
   @Delete(':id')
   @ApiIdParam()
-  @ApiOkResponse({ description: 'Contact face position deleted.' })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  @ApiOkResponse({
+    description: 'Contact face position deleted.',
+    type: DeleteResultDto,
+  })
+  remove(@Param('id') id: string): Promise<DeleteResultDto> {
     return this.contactFacePositionsService.remove(+id);
   }
 }
