@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { DeleteResultDto } from '../shared/dto/delete-result.dto';
-import { UpdateResultDto } from '../shared/dto/update-result.dto';
+import { FindNamesResultDto } from '../shared/dto/find-names-result.dto';
 import { QueryFieldsService } from '../shared/services/query-fields.service';
 import { COMPANY_CATEGORIES_QUERY_FIELDS } from './constants/company-categories-query-fields';
 import { CreateCompanyCategoryDto } from './dto/create-company-category.dto';
+import { FindAllCompanyCategoriesDto } from './dto/find-all-company-categories.dto';
 import { UpdateCompanyCategoryDto } from './dto/update-company-category.dto';
 import { CompanyCategory } from './entities/company-category.entity';
 
@@ -24,14 +25,34 @@ export class CompanyCategoriesService {
     return this.companyCategoryRepository.save(createCompanyCategoryDto);
   }
 
-  findAll(query: object): Promise<CompanyCategory[]> {
+  async findAll(query: object): Promise<FindAllCompanyCategoriesDto> {
     const options: FindManyOptions<CompanyCategory> =
       this.queryFieldsService.getFindManyOptions(
         query,
         COMPANY_CATEGORIES_QUERY_FIELDS,
       );
 
-    return this.companyCategoryRepository.find(options);
+    const count = await this.companyCategoryRepository.count(options);
+    const items = await this.companyCategoryRepository.find(options);
+
+    return {
+      count,
+      items,
+    };
+  }
+
+  async findNames(): Promise<FindNamesResultDto> {
+    const items = await this.companyCategoryRepository.find({
+      select: {
+        id: true,
+        name: true,
+      },
+      order: {
+        name: 'ASC',
+      },
+    });
+
+    return { items };
   }
 
   findOne(id: number): Promise<CompanyCategory | null> {
@@ -40,14 +61,16 @@ export class CompanyCategoriesService {
     });
   }
 
-  update(
-    id: number,
-    updateCompanyCategoryDto: UpdateCompanyCategoryDto,
-  ): Promise<UpdateResultDto> {
-    return this.companyCategoryRepository.update(id, updateCompanyCategoryDto);
-  }
-
   remove(id: number): Promise<DeleteResultDto> {
     return this.companyCategoryRepository.delete(id);
+  }
+
+  async update(
+    id: number,
+    updateCompanyCategoryDto: UpdateCompanyCategoryDto,
+  ): Promise<CompanyCategory> {
+    await this.companyCategoryRepository.update(id, updateCompanyCategoryDto);
+
+    return this.findOne(id);
   }
 }

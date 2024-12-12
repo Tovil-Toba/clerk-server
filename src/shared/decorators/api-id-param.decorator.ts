@@ -4,4 +4,5 @@ export const ApiIdParam = () =>
   ApiParam({
     name: 'id',
     description: 'Идентификатор',
+    type: Number,
   });

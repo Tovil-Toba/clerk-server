@@ -6,5 +6,7 @@ export class CreateContactDto extends OmitType(Contact, [
   'id',
   'company',
   'contactFace',
+  'createdAt',
   'manager',
+  'updatedAt',
 ] as const) {}

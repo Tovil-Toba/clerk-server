@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { DeleteResultDto } from '../shared/dto/delete-result.dto';
-import { UpdateResultDto } from '../shared/dto/update-result.dto';
+import { FindUserNamesResultDto } from '../shared/dto/find-user-names-result.dto';
 import { QueryFieldsService } from '../shared/services/query-fields.service';
 import { CONTACT_FACES_QUERY_FIELDS } from './constants/contact-faces-query-fields';
 import { CreateContactFaceDto } from './dto/create-contact-face.dto';
+import { FindAllContactFacesDto } from './dto/find-all-contact-faces.dto';
 import { UpdateContactFaceDto } from './dto/update-contact-face.dto';
 import { ContactFace } from './entities/contact-face.entity';
 
@@ -22,19 +23,46 @@ export class ContactFacesService {
     return this.contactFaceRepository.save(createContactFaceDto);
   }
 
-  findAll(query: object): Promise<ContactFace[]> {
-    const options: FindManyOptions<ContactFace> =
-      this.queryFieldsService.getFindManyOptions(
-        query,
-        CONTACT_FACES_QUERY_FIELDS,
-      );
-
-    return this.contactFaceRepository.find({
+  async findAll(query: object): Promise<FindAllContactFacesDto> {
+    const options: FindManyOptions<ContactFace> = {
       relations: {
         position: true,
       },
-      ...options,
+      ...this.queryFieldsService.getFindManyOptions(
+        query,
+        CONTACT_FACES_QUERY_FIELDS,
+      ),
+    };
+
+    const count = await this.contactFaceRepository.count(options);
+    const items = await this.contactFaceRepository.find(options);
+
+    return {
+      count,
+      items,
+    };
+  }
+
+  async findNames(): Promise<FindUserNamesResultDto> {
+    const items = await this.contactFaceRepository.find({
+      select: {
+        id: true,
+        name: {
+          last: true,
+          first: true,
+          middle: true,
+        },
+      },
+      order: {
+        name: {
+          last: 'ASC',
+          first: 'ASC',
+          middle: 'ASC',
+        },
+      },
     });
+
+    return { items };
   }
 
   findOne(id: number): Promise<ContactFace | null> {
@@ -47,14 +75,16 @@ export class ContactFacesService {
     });
   }
 
-  update(
-    id: number,
-    updateContactFaceDto: UpdateContactFaceDto,
-  ): Promise<UpdateResultDto> {
-    return this.contactFaceRepository.update(id, updateContactFaceDto);
-  }
-
   remove(id: number): Promise<DeleteResultDto> {
     return this.contactFaceRepository.delete(id);
+  }
+
+  async update(
+    id: number,
+    updateContactFaceDto: UpdateContactFaceDto,
+  ): Promise<ContactFace> {
+    await this.contactFaceRepository.update(id, updateContactFaceDto);
+
+    return this.findOne(id);
   }
 }

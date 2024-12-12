@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { DeleteResultDto } from '../shared/dto/delete-result.dto';
-import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { QueryFieldsService } from '../shared/services/query-fields.service';
 import { CONTACTS_QUERY_FIELDS } from './constants/contacts-query-fields';
 import { CreateContactDto } from './dto/create-contact.dto';
+import { FindAllContactsDto } from './dto/find-all-contacts.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact } from './entities/contact.entity';
 
@@ -22,11 +22,8 @@ export class ContactsService {
     return this.contactRepository.save(createContactDto);
   }
 
-  findAll(query: object): Promise<Contact[]> {
-    const options: FindManyOptions<Contact> =
-      this.queryFieldsService.getFindManyOptions(query, CONTACTS_QUERY_FIELDS);
-
-    return this.contactRepository.find({
+  async findAll(query: object): Promise<FindAllContactsDto> {
+    const options: FindManyOptions<Contact> = {
       select: {
         company: {
           id: true,
@@ -54,8 +51,19 @@ export class ContactsService {
         contactFace: true,
         manager: true,
       },
-      ...options,
-    });
+      ...this.queryFieldsService.getFindManyOptions(
+        query,
+        CONTACTS_QUERY_FIELDS,
+      ),
+    };
+
+    const count = await this.contactRepository.count(options);
+    const items = await this.contactRepository.find(options);
+
+    return {
+      count,
+      items,
+    };
   }
 
   findOne(id: number): Promise<Contact | null> {
@@ -69,14 +77,16 @@ export class ContactsService {
     });
   }
 
-  update(
-    id: number,
-    updateContactDto: UpdateContactDto,
-  ): Promise<UpdateResultDto> {
-    return this.contactRepository.update(id, updateContactDto);
-  }
-
   remove(id: number): Promise<DeleteResultDto> {
     return this.contactRepository.delete(id);
+  }
+
+  async update(
+    id: number,
+    updateContactDto: UpdateContactDto,
+  ): Promise<Contact> {
+    await this.contactRepository.update(id, updateContactDto);
+
+    return this.findOne(id);
   }
 }

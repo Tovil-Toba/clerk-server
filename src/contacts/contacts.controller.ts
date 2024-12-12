@@ -13,10 +13,10 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
 import { DeleteResultDto } from '../shared/dto/delete-result.dto';
-import { UpdateResultDto } from '../shared/dto/update-result.dto';
 import { CONTACTS_QUERY_FIELDS } from './constants/contacts-query-fields';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
+import { FindAllContactsDto } from './dto/find-all-contacts.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact } from './entities/contact.entity';
 
@@ -38,9 +38,9 @@ export class ContactsController {
   @ApiFieldsQuery(CONTACTS_QUERY_FIELDS)
   @ApiOkResponse({
     description: 'Contacts found.',
-    type: Array<Contact>,
+    type: FindAllContactsDto,
   })
-  findAll(@Query() query?: object): Promise<Contact[]> {
+  findAll(@Query() query?: object): Promise<FindAllContactsDto> {
     return this.contactsService.findAll(query);
   }
 
@@ -54,19 +54,6 @@ export class ContactsController {
     return this.contactsService.findOne(+id);
   }
 
-  @Patch(':id')
-  @ApiIdParam()
-  @ApiOkResponse({
-    description: 'Contact updated.',
-    type: UpdateResultDto,
-  })
-  update(
-    @Param('id') id: string,
-    @Body() updateContactDto: UpdateContactDto,
-  ): Promise<UpdateResultDto> {
-    return this.contactsService.update(+id, updateContactDto);
-  }
-
   @Delete(':id')
   @ApiIdParam()
   @ApiOkResponse({
@@ -75,5 +62,18 @@ export class ContactsController {
   })
   remove(@Param('id') id: string): Promise<DeleteResultDto> {
     return this.contactsService.remove(+id);
+  }
+
+  @Patch(':id')
+  @ApiIdParam()
+  @ApiOkResponse({
+    description: 'Contact updated.',
+    type: Contact,
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateContactDto: UpdateContactDto,
+  ): Promise<Contact> {
+    return this.contactsService.update(+id, updateContactDto);
   }
 }

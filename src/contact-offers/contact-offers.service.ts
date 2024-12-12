@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { DeleteResultDto } from '../shared/dto/delete-result.dto';
-import { UpdateResultDto } from '../shared/dto/update-result.dto';
+import { FindNamesResultDto } from '../shared/dto/find-names-result.dto';
 import { QueryFieldsService } from '../shared/services/query-fields.service';
 import { CONTACT_OFFERS_QUERY_FIELDS } from './constants/contact-offers-query-fields';
 import { CreateContactOfferDto } from './dto/create-contact-offer.dto';
+import { FindAllContactOffersDto } from './dto/find-all-contact-offers.dto';
 import { UpdateContactOfferDto } from './dto/update-contact-offer.dto';
 import { ContactOffer } from './entities/contact-offer.entity';
 
@@ -22,16 +23,34 @@ export class ContactOffersService {
     return this.contactOfferRepository.save(createContactOfferDto);
   }
 
-  findAll(query: object): Promise<ContactOffer[]> {
+  async findAll(query: object): Promise<FindAllContactOffersDto> {
     const options: FindManyOptions<ContactOffer> =
       this.queryFieldsService.getFindManyOptions(
         query,
         CONTACT_OFFERS_QUERY_FIELDS,
       );
 
-    return this.contactOfferRepository.find({
-      ...options,
+    const count = await this.contactOfferRepository.count(options);
+    const items = await this.contactOfferRepository.find(options);
+
+    return {
+      count,
+      items,
+    };
+  }
+
+  async findNames(): Promise<FindNamesResultDto> {
+    const items = await this.contactOfferRepository.find({
+      select: {
+        id: true,
+        name: true,
+      },
+      order: {
+        name: 'ASC',
+      },
     });
+
+    return { items };
   }
 
   findOne(id: number): Promise<ContactOffer | null> {
@@ -40,14 +59,16 @@ export class ContactOffersService {
     });
   }
 
-  update(
-    id: number,
-    updateContactOfferDto: UpdateContactOfferDto,
-  ): Promise<UpdateResultDto> {
-    return this.contactOfferRepository.update(id, updateContactOfferDto);
-  }
-
   remove(id: number): Promise<DeleteResultDto> {
     return this.contactOfferRepository.delete(id);
+  }
+
+  async update(
+    id: number,
+    updateContactOfferDto: UpdateContactOfferDto,
+  ): Promise<ContactOffer> {
+    await this.contactOfferRepository.update(id, updateContactOfferDto);
+
+    return this.findOne(id);
   }
 }

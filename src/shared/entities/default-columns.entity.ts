@@ -1,4 +1,3 @@
-import { ApiHideProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -22,14 +21,12 @@ export abstract class DefaultColumns {
   /**
    * Дата создания
    */
-  @ApiHideProperty()
   @CreateDateColumn()
   createdAt: Date;
 
   /**
    * Дата изменения
    */
-  @ApiHideProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -16,6 +16,10 @@ export const COMPANIES_QUERY_FIELDS: QueryField[] = [
     description: 'Идентификатор категории',
   },
   {
+    path: 'fieldOfActivity',
+    description: 'Сфера деятельности',
+  },
+  {
     path: 'manager.name.last',
     description: 'Фамилия менеджера',
   },
@@ -27,6 +31,10 @@ export const COMPANIES_QUERY_FIELDS: QueryField[] = [
   {
     path: 'name',
     description: 'Название компании',
+  },
+  {
+    path: 'notes',
+    description: 'Примечания',
   },
   {
     path: 'phones',
