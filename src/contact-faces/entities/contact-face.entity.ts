@@ -63,7 +63,9 @@ export class ContactFace extends DefaultColumns {
   })
   positionId?: null | number;
 
-  @ApiHideProperty()
+  /**
+   * Компания
+   */
   @ManyToOne(() => Company, (company: Company) => company.contactFaces, {
     onDelete: 'CASCADE',
   })

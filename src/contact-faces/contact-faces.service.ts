@@ -26,6 +26,7 @@ export class ContactFacesService {
   async findAll(query: object): Promise<FindAllContactFacesDto> {
     const options: FindManyOptions<ContactFace> = {
       relations: {
+        company: true,
         position: true,
       },
       ...this.queryFieldsService.getFindManyOptions(

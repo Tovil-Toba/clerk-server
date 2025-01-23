@@ -6,7 +6,6 @@ export const CONTACT_FACES_QUERY_FIELDS: QueryField[] = [
     path: 'companyId',
     description: 'Идентификатор компании',
     filterType: 'number',
-    required: true,
   },
   {
     path: 'email',
