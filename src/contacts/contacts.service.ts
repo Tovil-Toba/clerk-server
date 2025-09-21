@@ -36,6 +36,11 @@ export class ContactsService {
             middle: true,
             last: true,
           },
+          phone: true,
+          position: {
+            id: true,
+            name: true,
+          },
         },
         manager: {
           id: true,
@@ -48,8 +53,11 @@ export class ContactsService {
       },
       relations: {
         company: true,
-        contactFace: true,
+        contactFace: {
+          position: true,
+        },
         manager: true,
+        offer: true,
       },
       ...this.queryFieldsService.getFindManyOptions(
         query,

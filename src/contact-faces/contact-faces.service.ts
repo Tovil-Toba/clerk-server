@@ -44,8 +44,9 @@ export class ContactFacesService {
     };
   }
 
-  async findNames(): Promise<FindUserNamesResultDto> {
+  async findNames(companyId?: number): Promise<FindUserNamesResultDto> {
     const items = await this.contactFaceRepository.find({
+      where: { companyId },
       select: {
         id: true,
         name: {

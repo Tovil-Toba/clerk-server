@@ -8,7 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { ApiFieldsQuery } from '../shared/decorators/api-fields-query.decorator';
 import { ApiIdParam } from '../shared/decorators/api-id-param.decorator';
@@ -52,8 +57,15 @@ export class ContactFacesController {
     description: 'Contact face names found.',
     type: FindUserNamesResultDto,
   })
-  findNames(): Promise<FindUserNamesResultDto> {
-    return this.contactFacesService.findNames();
+  @ApiQuery({
+    name: 'companyId',
+    description: 'Идентификатор компании',
+    required: false,
+  })
+  findNames(
+    @Query('companyId') companyId?: string,
+  ): Promise<FindUserNamesResultDto> {
+    return this.contactFacesService.findNames(companyId && +companyId);
   }
 
   @Get(':id')

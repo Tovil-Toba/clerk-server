@@ -131,7 +131,8 @@ function setOrderDecorators(
   queryField: QueryField,
   decorators: PropertyDecorator[],
 ): void {
-  if (queryField?.isOrderDisabled || queryField.enum) {
+  if (queryField?.isOrderDisabled) {
+    // || queryField.enum
     return;
   }
 

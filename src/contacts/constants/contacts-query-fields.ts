@@ -34,6 +34,11 @@ export const CONTACTS_QUERY_FIELDS: QueryField[] = [
     filterType: 'number',
   },
   {
+    path: 'contactFace.positionId',
+    description: 'Идентификатор должности контактного лица',
+    filterType: 'number',
+  },
+  {
     path: 'contactDate',
     description: 'Дата контакта',
     filterType: 'date',
@@ -69,9 +74,9 @@ export const CONTACTS_QUERY_FIELDS: QueryField[] = [
     filterType: 'date',
   },
   {
-    path: 'offer.name',
-    description: 'Предложение',
-    filterType: 'string',
+    path: 'offerId',
+    description: 'Идентификатор предложения контакта',
+    filterType: 'number',
   },
   {
     path: 'phones',

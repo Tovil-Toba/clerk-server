@@ -28,7 +28,7 @@ export class Contact extends DefaultColumns {
   /**
    * Дата контакта
    */
-  @Column()
+  @Column({ nullable: true })
   contactDate?: Date;
 
   /**
@@ -82,7 +82,7 @@ export class Contact extends DefaultColumns {
   /**
    * Дата следующего контакта
    */
-  @Column()
+  @Column({ nullable: true })
   nextContactDate?: Date;
 
   /**
@@ -90,6 +90,12 @@ export class Contact extends DefaultColumns {
    */
   @Column('text')
   notesOnContactFace?: string;
+
+  /**
+   * Идентификатор предложения
+   */
+  @Column({ nullable: true, default: null })
+  offerId?: null | number;
 
   /**
    * Предложение
