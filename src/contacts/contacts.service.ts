@@ -81,6 +81,7 @@ export class ContactsService {
         company: true,
         contactFace: true,
         manager: true,
+        offer: true,
       },
     });
   }
